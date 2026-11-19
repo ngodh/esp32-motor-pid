@@ -1,0 +1,52 @@
+
+# ==============================
+# ESP-IDF Build
+# ==============================
+
+build/
+sdkconfig
+sdkconfig.old
+sdkconfig.backup
+sdkconfig.ci
+
+# ESP-IDF managed components
+managed_components/
+
+# Build artifacts
+*.o
+*.a
+*.elf
+*.bin
+*.map
+*.hex
+
+# ESP-IDF generated files
+*.pyc
+__pycache__/
+
+# ==============================
+# CMake generated files
+# ==============================
+
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+compile_commands.json
+
+# ==============================
+# IDE and editor
+# ==============================
+
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ==============================
+# OS generated files
+# ==============================
+
+.DS_Store
+Thumbs.db
+desktop.ini
