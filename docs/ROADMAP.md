@@ -2,6 +2,8 @@
 
 > File này là **sổ tay sống**: bạn đọc, làm theo, và tự sửa khi kế hoạch thay đổi.
 > Mọi thuật ngữ đều được giải thích từ đầu trong phần **Từ điển** của từng dự án. Gặp từ lạ → tra từ điển trước, đừng bỏ qua.
+>
+> **Cập nhật lần cuối: 20/11/2026.** Phần hardware đã chốt, môi trường đã dựng xong, xem **mục 0.5** (trạng thái), **Phần IV** (kiến trúc môi trường) và **Phần V** (sổ tay).
 
 ---
 
@@ -22,6 +24,46 @@
 ```
 
 Không đọc cả cuốn sách rồi mới làm. Chỉ đọc đúng cái cần cho bước tiếp theo.
+
+---
+
+## 0.5. Trạng thái hiện tại (cập nhật 20/11/2026)
+
+### Đã hoàn thành
+- [x] VM Ubuntu 22.04.5 (4 CPU, RAM 5288 MB, ổ 59 GB), Extension Pack, Guest Additions, nhóm `dialout`
+- [x] ESP-IDF v6.1.1 (cài bằng EIM); ví dụ blink đã nạp và chạy trên ESP32 (chip CP210x, ID `10c4:ea60`)
+- [x] Pico SDK tại `~/pico/pico-sdk`, submodule `tinyusb` (0.18.0) đã tải; `arm-none-eabi-gcc` 10.3.1
+- [x] PulseView + firmware fx2lafw, `picocom`
+- [x] GitHub (tài khoản `ngodh`): 2 repo, khóa SSH, cấu trúc thư mục, `.gitignore`, `ROADMAP.md`
+- [x] Repo FPGA clone cả ở Ubuntu và Windows (`C:\ISE\ISE_Projects\fpga-servo-coprocessor`); ISE VM thấy repo; sync test Windows ↔ Ubuntu ↔ ISE VM đạt
+- [x] Snapshot "Ubuntu sạch" và "Tools OK"
+- [x] Hạ RAM Ubuntu VM xuống 5288 MB để chạy cùng ISE VM (6144 MB) trên máy 16 GB
+- [x] Đặt mua linh kiện (xem bên dưới)
+
+### Đã đặt mua (chờ hàng về)
+| Món | Ghi chú |
+|---|---|
+| Motor JGA25-370 6 V, tỉ số 1/21.3 (280 RPM), có encoder | Motor chính của dự án B |
+| TB6612FNG module (header hàn sẵn) | Cầu H |
+| Breakout micro-USB cái ×2 | Đưa 5 V từ adapter lên breadboard (chỉ dùng chân VBUS và GND) |
+| Logic analyzer USB 24M 8CH | Dùng với PulseView |
+| Hàng rào đực 1×40 chân 2.54 mm | Hàn header cho Pico (và các module chưa có chân) |
+
+**Mua sau:** INA219 (cần từ Tuần 3), tụ điện phân 470–1000 µF 10 V (cần từ Tuần 4). **Tùy chọn:** thêm 2 servo SG90.
+
+### Việc đang chờ hoặc chưa làm
+- [ ] PWM ra LED bằng LEDC (nửa đầu Tuần 1) + 2 thí nghiệm: 5 Hz nhìn thấy nhấp nháy, đo điện áp 50% duty bằng DMM
+- [ ] Đọc núm xoay (potentiometer) bằng ADC
+- [ ] Hàn 2 dây và tụ gốm 100 nF vào motor 3 V trong kit
+- [ ] Hàn header cho Pico (khi header về)
+- [ ] Tạo thư mục `ise/` trong repo FPGA; xác nhận đường dẫn mount trong ISE VM (`ls /media`)
+- [ ] Hàng về: kiểm tra từng món, đo DMM 5 V ở breakout trước khi nối
+
+### Đề xuất bước tiếp theo (đang chờ bạn xác nhận)
+1. Hoàn thành PWM ra LED + đọc ADC (không cần hàng mới).
+2. Hàn tụ và dây cho motor 3 V cũ.
+3. **Bắt đầu phần RTL của Tuần 4 sớm** vì không cần hàng mới: tạo project ISE trong `ise/`, viết `servo_pwm.v` + testbench, chạy ISim, rồi UCF và nạp Spartan-3E (dùng switch/LED). Servo thật chờ nguồn 5 V từ breakout.
+4. Khi hàng về: làm Dự án B Tuần 1–3, rồi quay lại Dự án A Tuần 5–8.
 
 ---
 
@@ -56,12 +98,12 @@ Không đọc cả cuốn sách rồi mới làm. Chỉ đọc đúng cái cần
 
 ## 2. Chuẩn bị chung (làm trước Tuần 1)
 
-- [ ] Tạo tài khoản GitHub, tạo 2 repo: `esp32-motor-pid` và `fpga-servo-coprocessor`
-- [ ] Học 5 lệnh Git đủ dùng: `git init`, `git add`, `git commit -m "..."`, `git push`, `git log`. Commit **mỗi khi xong một bước nhỏ**, message ghi rõ đã làm gì (ví dụ: `Add servo PWM module with testbench`)
-- [ ] Tạo thư mục `docs/` trong mỗi repo để chứa ảnh waveform, đồ thị, sơ đồ
+- [x] Tạo tài khoản GitHub, tạo 2 repo: `esp32-motor-pid` và `fpga-servo-coprocessor`
+- [x] Học 5 lệnh Git đủ dùng: `git init`, `git add`, `git commit -m "..."`, `git push`, `git log`. Commit **mỗi khi xong một bước nhỏ**, message ghi rõ đã làm gì (ví dụ: `Add servo PWM module with testbench`)
+- [x] Tạo thư mục `docs/` trong mỗi repo để chứa ảnh waveform, đồ thị, sơ đồ
 - [ ] Chuẩn bị file nhật ký lỗi (xem cuối file)
 - [ ] Kiểm tra bộ đồ nghề: DMM hoạt động (đo thử pin AA ≈ 1.5 V), mỏ hàn, dây jumper, breadboard
-- [ ] Nên có một **logic analyzer rẻ** (loại 8 kênh, 24 MHz, khoảng 100–200k VNĐ) dùng với phần mềm PulseView/sigrok. Nó "nhìn thấy" tín hiệu số mà DMM không thấy được, và sẽ cứu bạn rất nhiều giờ debug ở cả hai dự án.
+- [x] (đã đặt mua) Nên có một **logic analyzer rẻ** (loại 8 kênh, 24 MHz, khoảng 100–200k VNĐ) dùng với phần mềm PulseView/sigrok. Nó "nhìn thấy" tín hiệu số mà DMM không thấy được, và sẽ cứu bạn rất nhiều giờ debug ở cả hai dự án.
 
 **Vì sao cần logic analyzer?** DMM chỉ cho bạn *một con số* tại một thời điểm. Còn tín hiệu số như SPI hay I2C là *chuỗi bit thay đổi hàng triệu lần/giây*. Logic analyzer ghi lại chuỗi đó và vẽ thành đồ thị theo thời gian, để bạn thấy bit nào sai.
 
@@ -94,6 +136,23 @@ Cách sửa: **đo tốc độ thật → so với tốc độ mong muốn → t
 | Breadboard, dây jumper | Nối mạch |
 
 **Nếu motor của bạn không có encoder:** dùng module cảm biến khe hồng ngoại (slot sensor) + một đĩa nhựa có lỗ gắn lên trục. Hoặc mua motor có encoder tích hợp (không đắt).
+
+### Linh kiện thực tế đã chốt (20/11/2026)
+
+| Linh kiện | Thông số | Trạng thái |
+|---|---|---|
+| Motor chính | JGA25-370, 6 V, tỉ số 1/21.3 (≈280 RPM), 6000 RPM trước hộp số, trục 4 mm, encoder 11 xung/vòng trục motor, 2 kênh A–B, encoder cấp 3.3–5 V | Đã đặt mua |
+| Cầu H | TB6612FNG: VM tối đa 15 V, logic 2.7–5.5 V, 1.2 A mỗi kênh, PWM tới 100 kHz | Đã đặt mua |
+| Nguồn motor | Adapter Vilros 5 V 2.5 A (đầu ra micro-USB) qua breakout micro-USB cái | Adapter có sẵn, breakout đã đặt |
+| Motor thử nghiệm | Motor DC 3–6 V trong kit: 0.35–0.4 A, 19000 RPM ở 3 V, 2 dây, không encoder | Có sẵn |
+| Cầu H dự phòng | L293D trong kit (tụt áp ~2 V, chịu 600 mA) | Có sẵn |
+| Cảm biến dòng | INA219 | Mua sau (Tuần 3) |
+
+- **Cấp encoder bằng 3.3 V từ ESP32** để tín hiệu ra là 3.3 V, an toàn cho chân ESP32.
+- Motor 6 V chạy từ nguồn 5 V qua TB6612 (tụt áp ít) nên đạt khoảng 75% tốc độ định mức (≈200 RPM), vẫn còn dư địa cho PID.
+- **Không cấp điện cho dây nào của motor khi chưa xác định đúng đâu là cặp dây motor** (đo điện trở bằng DMM giữa các cặp dây: cặp có điện trở thấp, vài Ω, là cuộn dây motor). Cấp nhầm vào dây encoder sẽ làm hỏng encoder.
+- Nguồn 5 V (adapter) và nguồn ESP32 (USB máy tính) **không nối với nhau**, chỉ nối chung GND.
+- Motor 3 V cũ chỉ dùng thí nghiệm (PWM, cầu H). 19000 RPM với 1 xung/vòng cho độ phân giải đo tốc độ rất kém (cửa sổ 10 ms chỉ ~3 xung), nên không dùng cho đồ thị PID của portfolio. Giữ trục chặt (stall) có thể làm nóng L293D; chỉ chạm nhẹ 1–2 giây.
 
 ### Cảnh báo an toàn phần cứng (đọc kỹ)
 
@@ -189,8 +248,8 @@ prev_error = error;
 **Kiến thức cần:** GPIO, PWM, cầu H, encoder, PCNT/ngắt (xem Từ điển).
 
 **Việc cần làm:**
-- [ ] Cài **ESP-IDF** (khuyên dùng, vì là bộ SDK chính thức, FreeRTOS tích hợp sẵn, công ty dùng thật) hoặc dùng Arduino framework nếu muốn nhanh hơn lúc đầu
-- [ ] Chạy ví dụ nhấp nháy LED (blink) để chắc môi trường hoạt động
+- [x] Cài **ESP-IDF** (khuyên dùng, vì là bộ SDK chính thức, FreeRTOS tích hợp sẵn, công ty dùng thật) hoặc dùng Arduino framework nếu muốn nhanh hơn lúc đầu
+- [x] Chạy ví dụ nhấp nháy LED (blink) để chắc môi trường hoạt động
 - [ ] Dùng **LEDC** (bộ PWM của ESP32) xuất PWM 20 kHz ra một chân; xem bằng LED hoặc logic analyzer thấy độ sáng/độ rộng xung đổi theo duty
 - [ ] Nối cầu H + motor (chưa nối encoder), cấp nguồn riêng, **đo điện áp ra motor bằng DMM** ở duty 25/50/75/100%
 - [ ] Điều khiển chiều quay bằng AIN1/AIN2
@@ -203,6 +262,17 @@ prev_error = error;
 - Bảng duty → RPM có xu hướng tăng đều (có thể có vùng chết ở duty thấp vì motor chưa đủ lực khởi động)
 
 **Tự kiểm tra:** (1) Vì sao không nối motor thẳng vào GPIO? (2) Nếu PPR trục ra là 330 và bạn đếm 66 xung trong 20 ms thì RPM bằng bao nhiêu? *(Đáp án: 66/330 = 0.2 vòng trong 0.02 s → 10 vòng/s → 600 RPM.)*
+
+**Hằng số cho motor đã chốt (JGA25-370, 1/21.3):**
+```c
+#define ENCODER_PPR_MOTOR   11      // xung mỗi vòng trục motor (một kênh)
+#define GEAR_RATIO          21.3f   // theo nhà sản xuất, cần hiệu chuẩn
+#define COUNTS_PER_REV      (ENCODER_PPR_MOTOR * 4 * GEAR_RATIO)  // ≈ 937.2 count/vòng trục ra
+```
+- Ở khoảng 200 RPM (3.33 vòng/giây): ≈ 3100 count/giây, tức ≈ 31 count trong cửa sổ 10 ms; 1 count lệch ≈ 6.4 RPM (≈ 3% sai số lượng tử hóa).
+- **Hiệu chuẩn:** quay tay trục ra đúng 1 vòng, đọc số count. Nếu ra ≈ 937 là đúng; nếu lệch nhiều thì dùng số đo thật và ghi vào Nhật ký lỗi.
+- Dùng **PCNT** giải mã quadrature bằng phần cứng, cấp encoder 3.3 V. Nếu tín hiệu A/B không đổi mức khi quay, thử bật pull-up nội hoặc thêm điện trở 10 kΩ lên 3.3 V.
+- **ESP-IDF v6.1.1 là bản rất mới:** nhiều ví dụ trên mạng viết cho v4/v5 dùng API cũ có thể không build được. Luôn tra tài liệu đúng bản v6.1 trên docs.espressif.com.
 
 ### Tuần 2 — PID và FreeRTOS (Mục tiêu: tốc độ bám theo setpoint, có đồ thị)
 
@@ -302,10 +372,10 @@ Servo cần một xung lặp lại mỗi **20 ms**; độ rộng xung **1 ms đ�
 
 | Linh kiện | Ghi chú |
 |---|---|
-| Bo Spartan-3E | Xung nhịp 50 MHz. Chuẩn I/O dùng `LVCMOS33` (3.3 V) |
-| Raspberry Pi Pico | Cũng 3.3 V → nối trực tiếp được với FPGA |
-| 4–8 servo (SG90 hoặc tương tự) | **Bắt đầu với 2–4 servo**, thêm dần |
-| Nguồn 5 V riêng cho servo (≥ 2–3 A nếu dùng nhiều servo) | Servo kéo dòng lớn khi khởi động/chịu tải |
+| Bo Spartan-3E | Xung nhịp 50 MHz. Chuẩn I/O dùng `LVCMOS33` (3.3 V). **Có nguồn riêng**, nạp qua cổng **USB Type-B** (đã nạp thành công từ ISE VM). Model bo: CHƯA XÁC NHẬN |
+| Raspberry Pi Pico | Cũng 3.3 V → nối trực tiếp được với FPGA. **Chưa hàn header**: hàn bằng thanh header đực 1×40 đã đặt (bẻ đôi thành 2 hàng 20 chân; cắm vào breadboard rồi hàn để thẳng hàng) |
+| 4–8 servo (SG90 hoặc tương tự) | Hiện có **2 servo** (trong kit). Bắt đầu với 2 servo; mua thêm sau nếu muốn demo 4 con |
+| Nguồn 5 V riêng cho servo (≥ 2–3 A nếu dùng nhiều servo) | Dùng adapter Vilros 5 V 2.5 A qua breakout micro-USB cái; đủ cho 2–4 servo. Servo khởi động/chịu tải kéo dòng lớn |
 | Dây jumper, breadboard, logic analyzer (nên có) | |
 
 ### Cảnh báo an toàn phần cứng
@@ -398,6 +468,8 @@ Mỗi nhịp SCK, mỗi bên truyền 1 bit. Master là bên quyết định t�
 **Vì sao tuần này:** đây là khối đơn giản nhất nhưng dạy bạn trọn quy trình FPGA (viết → mô phỏng → nạp → đo). Làm quen quy trình trên thứ dễ trước khi đụng thứ khó (SPI).
 
 **Kiến thức cần:** clock, counter, comparator, testbench, synthesis, UCF, iMPACT.
+
+**Môi trường (chi tiết ở Phần IV):** soạn `rtl/`, `tb/`, `constraints/` trên **Windows** (VS Code) trong `C:\ISE\ISE_Projects\fpga-servo-coprocessor`; mở **ISE VM** để ISim, synthesis, bitstream và iMPACT; ISE VM đọc thẳng cùng thư mục đó, **không cần clone hay copy**. Khi Add Source trong ISE, **bỏ tích "Copy to Project"**. Tên file toàn chữ thường (ISE VM là Linux, phân biệt hoa/thường). Project ISE đặt trong `ise/` và thêm nguồn bằng đường dẫn tương đối (`../rtl/...`).
 
 **Việc cần làm:**
 - [ ] Nhắc lại quy trình ISE bạn đã làm với `led_test` (tạo project → code → UCF → bitstream → iMPACT)
@@ -568,33 +640,217 @@ Video demo: <link>
 
 ---
 
-# PHẦN IV — SỔ TAY CỦA BẠN (tự cập nhật)
+# PHẦN IV — KIẾN TRÚC MÔI TRƯỜNG LÀM VIỆC
 
-## Thông số phần cứng thực tế (điền khi có)
+**Ba nguyên tắc:** (1) Git là đường duy nhất đưa source giữa Ubuntu và Windows. (2) ISE VM không có bản source riêng, nó đọc thẳng clone trên Windows. (3) Mỗi thiết bị USB gắn cố định với một VM.
+
+## IV.1. Vai trò từng môi trường
+
+| Môi trường | Cấu hình | Làm | Không làm | USB |
+|---|---|---|---|---|
+| **Windows 11 host** | RAM 16 GB, VirtualBox + Extension Pack, Git for Windows, VS Code | Soạn Verilog/testbench/UCF; git cho clone A#1; chạy VM | Cài ESP-IDF/Pico SDK, build firmware | Cắm vật lý mọi thiết bị, nhường cho VM bằng USB filter |
+| **Ubuntu 22.04.5 VM** | 4 CPU, RAM 5288 MB, ổ 59 GB | **Toàn bộ Dự án B**; build và nạp Pico; PulseView; serial; git cho repo B và `pico_fw/`, README, `docs/` của repo A | Verilog, ISE, đặt repo trong shared folder | ESP32, Pico, logic analyzer |
+| **ISE 14.7 VM** | Oracle Linux (do AMD cung cấp), RAM 6144 MB | ISim, synthesis, implementation, bitstream, **iMPACT nạp Spartan-3E** | Git, clone repo, Pico/ESP32 | Spartan-3E (USB Type-B) |
+| **GitHub** | Tài khoản `ngodh` | Lưu lịch sử, đồng bộ, backup | Chứa file build | Không |
+
+## IV.2. Sơ đồ
+
+```
+                    ┌──────────────────────────┐
+                    │          GITHUB          │
+                    │ repo B  esp32-motor-pid  │
+                    │ repo A  fpga-servo-...   │
+                    └───▲──────────────────▲───┘
+      git pull/push     │ (SSH)            │ (HTTPS)   git pull/push
+      repo B + repo A   │                  │           repo A
+ ┌──────────────────────┴──┐        ┌──────┴───────────────────────┐
+ │ UBUNTU VM  (ext4)       │        │ WINDOWS 11 HOST  (NTFS)      │
+ │ clone B  (đầy đủ)       │        │ clone A#1                    │
+ │ clone A#2               │        │ C:\ISE\ISE_Projects\         │
+ │ BUILD: ESP32 + Pico     │        │   fpga-servo-coprocessor     │
+ │ ESP-IDF, Pico SDK       │        │ SOẠN Verilog, UCF            │
+ └─────────────────────────┘        └──────────────┬───────────────┘
+                                                   │ Shared Folder
+                                                   │ (vboxsf, cùng file)
+                                    ┌──────────────▼───────────────┐
+                                    │ ISE 14.7 VM (Oracle Linux)   │
+                                    │ KHÔNG clone, KHÔNG git       │
+                                    │ ISim · XST · Impl · Bitgen   │
+                                    │ iMPACT                       │
+                                    └──────────────────────────────┘
+ Global Folder D:\Ubuntu2204_shared_folder: chỉ chuyển file lớn (video, log thô).
+
+ Phần cứng và USB:
+   Windows ─ USB filter → Ubuntu VM:  ESP32 (CP210x, flash + log UART)
+                                      Pico (BOOTSEL: ổ RPI-RP2 | chạy: /dev/ttyACM0)
+                                      Logic analyzer (PulseView)
+           ─ USB filter → ISE VM:     Spartan-3E (USB-B, iMPACT)
+   Pico ──SPI (GP16 MISO, GP17 CS, GP18 SCK, GP19 MOSI) + GND chung──► chân I/O Spartan-3E
+   Spartan-3E ──PWM──► servo (nguồn 5 V riêng từ adapter)
+```
+
+| Luồng | Từ → đến | Nội dung |
+|---|---|---|
+| Git | Ubuntu ↔ GitHub (SSH); Windows ↔ GitHub (HTTPS) | Source |
+| Cùng file | Windows ↔ ISE VM (shared folder) | Verilog, UCF, project ISE; không phải truyền file |
+| Build artifacts | Nằm lại nơi build | `.bit` (ISE VM), `.uf2` và `build/` (Ubuntu); không vào Git |
+| USB | Windows → VM | Mỗi thiết bị thuộc một VM cố định |
+| Serial/UART | ESP32 và Pico → Ubuntu | Log, đồ thị, CLI |
+| SPI | Pico → FPGA | Khung 24 bit đọc/ghi thanh ghi |
+
+## IV.3. Git: quy tắc sở hữu thư mục
+
+Repo B: **1 clone** (Ubuntu). Repo A: **2 clone** (Windows và Ubuntu), đồng bộ bằng GitHub. Mỗi nơi chỉ sửa vùng của mình nên không bao giờ xung đột merge.
+
+| Thư mục (repo A) | Chỉ sửa ở |
+|---|---|
+| `rtl/`, `tb/`, `constraints/`, `ise/`, `docs/img/sim_*` | **Windows** (clone A#1) |
+| `pico_fw/`, `README.md`, `docs/*.md`, `docs/img/la_*`, `docs/logs/` | **Ubuntu** (clone A#2) |
+
+- Quy ước tên file: **chữ thường, gạch dưới** (`servo_pwm.v`, `servo_pwm_tb.v`), tên module trùng tên file.
+- Không đưa vào Git: `build/`, `.bit`, `.uf2`, `.elf`, `sdkconfig`, `managed_components/`, file sinh ra của ISE (đã có trong `.gitignore`).
+- Ubuntu thấy `ISE_Projects` nhưng **chỉ để xem**, không chạy git hay build ở đó.
+
+## IV.4. Shared folder
+
+| Thư mục | Vai trò |
+|---|---|
+| `C:\ISE\ISE_Projects` | Cầu nối clone Windows ↔ ISE VM (cùng file). Bắt buộc cho Dự án A |
+| `D:\Ubuntu2204_shared_folder` | Chỉ chuyển file lớn (video, log thô). Không chứa source |
+
+| Loại tài nguyên | Chuyển bằng gì |
+|---|---|
+| Source | Git |
+| Build artifacts, firmware, bitstream | Không chuyển, nằm lại nơi build |
+| Waveform | Ảnh chụp trong `docs/img/` qua Git |
+| Log nhỏ, báo cáo | Git |
+| Log lớn, video | `D:\Ubuntu2204_shared_folder`, rồi upload (Drive/YouTube) |
+
+Không build ESP32 và Pico trong shared folder. ISE buộc phải làm việc trong thư mục project; nếu chậm hoặc lỗi khóa file/quyền thì ghi vào Nhật ký lỗi và tìm phương án dự phòng.
+
+## IV.5. USB filter
+
+| Thiết bị | VM | Filter |
+|---|---|---|
+| ESP32 (CP210x) | Ubuntu | Vendor `10c4`, Product `ea60` |
+| Pico | Ubuntu | Vendor `2e8a`, Product để trống (bắt cả BOOTSEL và chạy thường) |
+| Logic analyzer | Ubuntu | `lsusb` trước/sau khi mở PulseView, thêm cả hai ID |
+| Spartan-3E | ISE VM | ID lấy từ Devices → USB của ISE VM |
+
+Một thiết bị chỉ thuộc một nơi tại một thời điểm. Không nhận được thiết bị thì kiểm tra theo thứ tự: cáp có dữ liệu và bo có nguồn → thiết bị có trong Devices → USB của VM → chương trình khác trên Windows đang giữ → Extension Pack, USB 2.0 controller, filter → trong guest: `lsusb`, `dmesg | tail`, `ls /dev/ttyUSB* /dev/ttyACM*` → rút cắm lại, cắm thẳng cổng máy, khởi động lại VM.
+
+## IV.6. Workflow Dự án B (chỉ trong Ubuntu VM)
+
+1. Bật Windows → VirtualBox → khởi động Ubuntu VM → cắm ESP32 (`ls /dev/ttyUSB*` thấy cổng).
+2. Terminal: `source ~/.espressif/tools/activate_idf_v6.1.1.sh`, `cd ~/dwcstinhs/projects/esp32-motor-pid`, `git pull`.
+3. Sửa code trong `main/`.
+4. `idf.py build` (firmware ở `build/`, không vào Git).
+5. `idf.py -p /dev/ttyUSB0 flash monitor` (thoát bằng Ctrl+]).
+6. Ghi log: **đóng monitor trước**, rồi chạy script đọc serial ghi CSV (một chương trình mở cổng serial tại một thời điểm).
+7. Vẽ đồ thị: terminal khác chỉ kích hoạt `embedded-env` (không kích hoạt ESP-IDF), chạy `scripts/plot.py`, lưu PNG vào `docs/`.
+8. `git status` → `git add -A && git commit -m "..."` → `git push`.
+9. Tắt VM bằng Shut down. **Không restore snapshot khi còn code chưa push.**
+
+## IV.7. Workflow Dự án A
+
+| Giai đoạn | Môi trường | Việc chính | Kết quả nằm ở |
+|---|---|---|---|
+| 1. RTL | Windows soạn → ISE VM chạy | `git pull`; sửa `rtl/`, `tb/`, `constraints/`; ISim; Synthesize → Implement → Generate Programming File; iMPACT nạp bo; commit/push từ Windows | `.bit` trong `ise/` (không vào Git); ảnh waveform `docs/img/sim_*` |
+| 2. Pico firmware | Ubuntu | `git pull`; sửa `pico_fw/`; `cd pico_fw/build && cmake .. && make -j4`; giữ BOOTSEL khi cắm Pico, copy `.uf2` vào ổ `RPI-RP2`; `picocom` trên `/dev/ttyACM0`; commit/push | `.uf2` trong `pico_fw/build/` |
+| 3. Tích hợp | ISE VM (nạp lại `.bit` nếu bo mất nguồn) → Ubuntu | Nối SPI (GP16/17/18/19) + GND chung; CLI `id` phải trả `0xA55A`; `set`/`get`; PulseView khi lỗi | Waveform đo thật |
+| 4. Portfolio | Cả hai | Ảnh ISim (Windows) và ảnh PulseView (Ubuntu) với tiền tố tên khác nhau; README chỉ sửa ở Ubuntu; push cả hai rồi `git pull` chéo | GitHub |
+
+- Pico và FPGA **độc lập**: Pico không cần `.bit`, ISE không cần file Pico. Thứ nối hai bên là tài liệu register map và dây SPI.
+- Cấu hình FPGA qua JTAG **mất khi tắt nguồn bo** hoặc bấm nút PROG; bo có nguồn riêng nên tắt ISE VM không làm mất cấu hình.
+
+## IV.8. Checklist khi chuyển môi trường
+
+**Rời:** lưu mọi file → `git status` → commit + push → đóng chương trình đang giữ USB/serial.
+**Vào:** `git pull` (nếu là clone) → đúng nhánh `main` → USB đã gắn đúng VM → kích hoạt đúng môi trường (ESP-IDF cho B; không kích hoạt khi chạy script Python).
+
+## IV.9. Những điều tuyệt đối không làm
+
+1. Không sửa cùng một file ở hai clone; không sửa ngoài vùng sở hữu.
+2. Không sửa trước khi `git pull`; không rời môi trường khi chưa commit/push.
+3. Không dùng shared folder để đồng bộ source bằng tay; không clone repo B hoặc A#2 vào shared folder.
+4. Không chạy git từ trong ISE VM hay Ubuntu trên `ISE_Projects`.
+5. Không để ISE tích "Copy to Project".
+6. Không commit `build/`, `.bit`, `.uf2`, `sdkconfig`, venv.
+7. Không restore snapshot khi còn code chưa push.
+8. Không mở serial monitor và script log cùng lúc; không để hai VM cùng giữ một thiết bị USB.
+9. Không `git push --force`.
+10. Không rút USB hay tắt nóng VM khi đang flash hoặc nạp.
+
+## IV.10. Đường dẫn và cấu hình quan trọng
 
 | Mục | Giá trị |
 |---|---|
-| Motor (model, điện áp, tỉ số truyền) | |
-| Encoder (PPR, điện áp cấp, mức tín hiệu) | |
-| Cầu H đang dùng | |
-| Loại servo, số lượng | |
-| Có logic analyzer không? | |
-| Phiên bản ESP-IDF / Pico SDK | |
+| Kích hoạt ESP-IDF | `source ~/.espressif/tools/activate_idf_v6.1.1.sh` (IDF_PATH `~/.espressif/v6.1.1/esp-idf`) |
+| Pico SDK | `/home/dwcstinhs/pico/pico-sdk` (`PICO_SDK_PATH`) |
+| Repo B (Ubuntu) | `~/dwcstinhs/projects/esp32-motor-pid` |
+| Repo A (Ubuntu) | `~/dwcstinhs/projects/fpga-servo-coprocessor` |
+| Repo A (Windows) | `C:\ISE\ISE_Projects\fpga-servo-coprocessor` |
+| Remote | `git@github.com:ngodh/esp32-motor-pid.git`, `git@github.com:ngodh/fpga-servo-coprocessor.git` |
+| Python venv | `embedded-env` (matplotlib, pandas, pyserial) |
+| Global folder | `D:\Ubuntu2204_shared_folder` |
+
+## IV.11. Bộ nhớ (RAM) khi chạy hai VM
+
+Máy 16 GB: Ubuntu 5288 MB + ISE 6144 MB ≈ 11.2 GB, Windows còn ≈ 4.8 GB. Kiểm tra bằng Task Manager → Memory: "In use" nên dưới khoảng 85%. Khi build ESP-IDF, theo dõi `free -h`; nếu `Swap used` vượt khoảng 500 MB hoặc báo `Killed signal terminated program cc1` thì tăng RAM Ubuntu thêm 1 GB. Đổi RAM: tắt hẳn VM → Settings → System → Motherboard → Base Memory (nếu bị mờ: Discard Saved State).
+
+## IV.12. Còn CHƯA XÁC NHẬN
+
+- Đường dẫn mount của `ISE_Projects` trong ISE VM (chạy `ls /media`; thường là `/media/sf_ISE_Projects`).
+- Model bo Spartan-3E.
+- `picotool` đã cài chưa (không bắt buộc: copy `.uf2` vào ổ `RPI-RP2` là đủ).
+- Hiệu năng ISE khi làm việc trực tiếp trong shared folder.
+
+---
+
+# PHẦN V — SỔ TAY CỦA BẠN (tự cập nhật)
+
+## Thông số phần cứng thực tế (cập nhật 20/11/2026)
+
+| Mục | Giá trị |
+|---|---|
+| Motor chính | JGA25-370, 6 V, tỉ số 1/21.3 (≈280 RPM), trục 4 mm, 6 dây *(đã đặt mua)* |
+| Motor thử nghiệm | Motor DC 3–6 V trong kit: 0.35–0.4 A, 19000 RPM @ 3 V, 2 dây, không encoder, 25×21 mm, trục 2 mm |
+| Encoder | 11 xung/vòng trục motor, 2 kênh A–B, cấp 3.3–5 V (dùng 3.3 V); ≈ 937 count/vòng trục ra khi đọc ×4, cần hiệu chuẩn |
+| Cầu H | TB6612FNG *(đã đặt mua)*; L293D trong kit để dự phòng |
+| Servo | 2 (trong kit); mua thêm sau nếu cần |
+| Nguồn | Adapter Vilros 5 V 2.5 A, đầu ra micro-USB → breakout micro-USB cái *(đã đặt 2 cái)* |
+| Logic analyzer | USB 24M 8CH *(đã đặt mua)*, dùng PulseView |
+| Dây nối | Đực-đực, đực-cái, cái-cái, đủ số lượng |
+| Spartan-3E | Nguồn riêng; nạp qua USB Type-B (đã nạp được từ ISE VM); model: CHƯA XÁC NHẬN |
+| Pico | Chưa hàn header; đã đặt thanh header đực 1×40 |
+| ESP32 | Silicon Labs CP210x, ID `10c4:ea60` |
+| Phần mềm | ESP-IDF v6.1.1 (EIM), Pico SDK (tinyusb 0.18.0), arm-none-eabi-gcc 10.3.1, CMake 3.22.1, Ninja 1.10.1, Python 3.10.12, PulseView, picocom |
+| Máy tính | Windows 11, RAM 16 GB. Ubuntu VM 22.04.5: 4 CPU, RAM 5288 MB, ổ 59 GB. ISE VM (Oracle Linux, AMD): RAM 6144 MB |
 
 ## Nhật ký lỗi (ghi mỗi lần gặp lỗi)
 
 | Ngày | Dự án | Hiện tượng | Giả thuyết | Cách kiểm tra | Nguyên nhân thật | Cách sửa |
 |---|---|---|---|---|---|---|
+| 20/11/2026 | A (Pico SDK) | `ls lib/tinyusb` không in gì (thư mục rỗng) | Clone Pico SDK thiếu submodule | `git submodule status`: dòng `lib/tinyusb` có dấu `-` | Quên `--recurse-submodules` khi clone | `cd $PICO_SDK_PATH && git submodule update --init`; kiểm tra lại: `tinyusb` (0.18.0) có nội dung |
 | | | | | | | |
 
 ## Nhật ký thay đổi kế hoạch
 
 | Ngày | Thay đổi | Lý do |
 |---|---|---|
+| 20/11/2026 | Motor chính chuyển sang JGA25-370 6 V 1/21.3 có encoder; motor 3 V trong kit chỉ để thử nghiệm | 19000 RPM với 1 xung/vòng cho độ phân giải đo tốc độ quá kém |
+| 20/11/2026 | Cầu H: TB6612FNG (L293D dự phòng) | Motor 6 V trên nguồn 5 V cần cầu H tụt áp ít |
+| 20/11/2026 | Nguồn motor/servo: adapter Vilros 5 V 2.5 A qua breakout micro-USB | Đã có adapter; cổng ra là micro-USB (không phải USB-C) |
+| 20/11/2026 | Repo A có 2 clone (Windows + Ubuntu), chia quyền sở hữu thư mục; thêm thư mục `ise/` | ISE VM chỉ nhìn thấy đĩa Windows; Ubuntu build Pico trên đĩa riêng |
+| 20/11/2026 | RAM Ubuntu VM 8192 → 5288 MB (ISE 6144 MB) | Máy 16 GB, chạy hai VM cùng lúc |
 | | | |
 
 ## Từ mới tôi vừa học (tự thêm)
 
+- **Submodule (Git):** repo con nằm trong repo cha; phải tải riêng bằng `git submodule update --init`
+- **vboxsf / Shared Folder:** cách VirtualBox cho VM thấy một thư mục của Windows
+- **USB filter:** quy tắc VirtualBox tự gắn thiết bị USB vào VM khi cắm
+- **Save State vs Pause:** Save State ghi RAM của VM ra đĩa và giải phóng RAM; Pause thì không
 - 
 
 ## Tài liệu cần tìm đọc
