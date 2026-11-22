@@ -8,11 +8,11 @@
 
 ## 0. ĐỌC TRƯỚC (Agent đọc mục này đầu tiên)
 
-**STATE** (Agent cập nhật các trường "hiện tại" cuối mỗi phiên):
+**STATE** (Agent cập nhật các trường "hiện tại" cuối mỗi phiên): 
 
 | Trường | Giá trị |
 |---|---|
-| Milestone hiện tại | **M0** (hoàn tất phần còn lại) → **M1**. **Người học chưa bắt đầu bài thực hành nào của dự án B** (mới xong dựng môi trường và đặt hàng) |
+| Milestone hiện tại |  **M1**. **Người học chưa bắt đầu bài thực hành nào của dự án B** (mới xong dựng môi trường và đặt hàng) |
 | Phiên kế tiếp | **S00** rồi **S01** (xem §5) |
 | Phần cứng | Đã về: motor JGA25-370 có encoder, TB6612FNG, breakout micro-USB ×2, logic analyzer 24M 8CH, header đực 1×40. **Chưa đặt: INA219** (đợt mua 2, cần về trước S09; xem PM-001) |
 | Lỗi đang mở | 0 (xem §7) |
@@ -262,7 +262,12 @@ Giả định ~4 phiên/tuần, mỗi phiên ~2 giờ; dự án B ≈ 3 tuần (
 - Bằng chứng: <đường dẫn file> | Commit: <hash>
 ```
 
-*(chưa có mục nào)*
+### S00 — Xác nhận môi trường (tự kiểm tra, chưa qua Agent) — 2026-11-23
+- Làm: ESP-IDF v6.1.1; build sạch project blink_led thành công (1038/1038); .gitignore mở rộng đã push; ROADMAP và PROGRESS đã copy vào docs/
+- Số liệu: RAM VM 5.0 GiB, swap 2.0 GiB dùng 0B, pswpout = <điền>
+- Ghi chú: cảnh báo CMake (wpa_supplicant/esp_wifi) và Kconfig "hex literal" là của ESP-IDF v6.1.1, không ảnh hưởng
+- Teach-back: chưa (agent hỏi 2 câu của M0 ở đầu S01)
+- Commit: b23d80d78aa37df2054b17b99bd7b76b626d4706
 
 ---
 
